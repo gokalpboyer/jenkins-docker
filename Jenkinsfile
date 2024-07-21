@@ -1,27 +1,26 @@
 pipeline {
     agent any 
     environment {
-    DOCKERHUB_CREDENTIALS = credentials('ayoub-dockerhub')
+        DOCKERHUB_CREDENTIALS = credentials('ayoub-dockerhub')
     }
     stages { 
-
         stage('Build docker image') {
             steps {  
                 sh 'docker build -t ayoub/flask:$BUILD_NUMBER .'
             }
         }
-        stage('login to dockerhub') {
-            steps{
+        stage('Login to DockerHub') {
+            steps {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-        stage('push image') {
-            steps{
+        stage('Push image') {
+            steps {
                 sh 'docker push ayoub/flask:$BUILD_NUMBER'
             }
         }
-}
-post {
+    }
+    post {
         always {
             sh 'docker logout'
         }
